@@ -2,3 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+  background-color: #1f2937;
+}
+
+@keyframes gradientShadow {
+  0% {
+    box-shadow: 0 0 5px rgba(128, 0, 128, 0.8), 0 0 10px rgba(0, 191, 255, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(85, 0, 85, 0.8), 0 0 20px rgba(0, 191, 255, 0.8);
+  }
+}
+
+.hover\:shadow-gradient:hover {
+  animation: gradientShadow 0.5s forwards;
+}
