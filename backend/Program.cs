@@ -6,7 +6,6 @@ using SignalingServer.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Додавання конфігурації з appsettings.json
 builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 
 // Налаштування служб

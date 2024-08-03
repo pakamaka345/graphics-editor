@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { TextField, Button, FormControlLabel, Checkbox, Typography, Box } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faGoogle, faApple, faFacebook } from "@fortawesome/free-brands-svg-icons";
+import {  faApple, faFacebook } from "@fortawesome/free-brands-svg-icons";
 import { makeStyles } from '@mui/styles';
 import { useNavigate } from "react-router-dom";
 import authService from '../Services/AuthService';
+import GoogleLoginComponent from "../components/GoogleLogin";
+import FacebookLoginComponent from "../components/FacebookLogin";
 
 const useStyles = makeStyles({
     container: {
@@ -132,7 +134,7 @@ const Login: React.FC = () => {
         const result = await authService.login(email, password, rememberMe);
 
         if (result.success) {
-            navigate('/');  
+            navigate('/dashboard');  
         } else {
             setError(result.message);
         }
@@ -238,15 +240,7 @@ const Login: React.FC = () => {
                 ) : (
                     <Box className={classes.socialButtonContainer}>
                         <Box className={classes.socialButtonWrapper}>
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                startIcon={<FontAwesomeIcon icon={faGoogle} />}
-                                fullWidth
-                                className={classes.socialButton}
-                            >
-                                Continue with Google
-                            </Button>
+                            <GoogleLoginComponent />
                         </Box>
                         <Box className={classes.socialButtonWrapper}>
                             <Button
@@ -260,15 +254,7 @@ const Login: React.FC = () => {
                             </Button>
                         </Box>
                         <Box className={classes.socialButtonWrapper}>
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                startIcon={<FontAwesomeIcon icon={faFacebook} />}
-                                fullWidth
-                                className={classes.socialButton}
-                            >
-                                Continue with Facebook
-                            </Button>
+                            <FacebookLoginComponent />
                         </Box>
                     </Box>
                 )}
