@@ -1,7 +1,6 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFacebookF, faTwitter, faLinkedinIn, faInstagram } from "@fortawesome/free-brands-svg-icons";
-import { Avatar } from '@mui/material/Avatar';
 
 const Footer: React.FC = () => {
     return (
@@ -10,7 +9,7 @@ const Footer: React.FC = () => {
                 <div className="flex flex-col md:flex-row md:justify-between">
                     {/* Логотип */}
                     <div className="mb-4 md:mb-0 flex space-x-5">
-                        <img src="../../public/logo.png" alt="Logo" className="w-12 h-12 bg-white" />
+                        <img src="/logo.png" alt="Logo" className="w-12 h-12 bg-white" />
                         <div>
                             <h1 className="text-3xl font-bold">Virtuoso Board</h1>
                             <p className="text-gray-400 mt-2">© 2024 Virtuoso Board. All rights reserved.</p>

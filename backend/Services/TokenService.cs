@@ -1,9 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
-using System.Runtime.CompilerServices;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
-using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
@@ -33,11 +31,13 @@ public class TokenService : ITokenService {
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
+        var expiration = rememberMe ? DateTime.UtcNow.AddDays(Convert.ToDouble(_configuration["JWT:LongExpireDays"])) : DateTime.UtcNow.AddDays(Convert.ToDouble(_configuration["JWT:ShortExpireDays"]));
+
         var token = new JwtSecurityToken(
             issuer: _configuration["JWT:Issuer"],
             audience: _configuration["JWT:Audience"],
             claims: claims,
-            expires: rememberMe ? DateTime.UtcNow.AddDays(Convert.ToDouble(_configuration["JWT:LongExpireDays"])) : DateTime.UtcNow.AddMinutes(Convert.ToDouble(_configuration["JWT:ShortExpireMinutes"])),
+            expires: expiration,
             signingCredentials: creds);
 
         var jwtToken = new JwtSecurityTokenHandler().WriteToken(token);

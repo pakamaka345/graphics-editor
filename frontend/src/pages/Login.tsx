@@ -3,6 +3,8 @@ import { TextField, Button, FormControlLabel, Checkbox, Typography, Box } from "
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGoogle, faApple, faFacebook } from "@fortawesome/free-brands-svg-icons";
 import { makeStyles } from '@mui/styles';
+import { useNavigate } from "react-router-dom";
+import authService from '../Services/AuthService';
 
 const useStyles = makeStyles({
     container: {
@@ -60,7 +62,7 @@ const useStyles = makeStyles({
         textAlign: 'left',
         width: 'auto',
         marginLeft: 0,
-        marginRight: 'auto',
+        marginRight: 'auto'
     },
     socialButtonContainer: {
         display: 'flex',
@@ -77,12 +79,24 @@ const useStyles = makeStyles({
 
 const Login: React.FC = () => {
     const classes = useStyles();
+    const navigate = useNavigate();
     const [isLogin, setIsLogin] = useState(true);
     const [isEmail, setIsEmail] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
     const [login, setLogin] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [loginError, setLoginError] = useState('');
+    const [emailError, setEmailError] = useState('');
+    const [passwordError, setPasswordError] = useState('');
+    const [Error, setError] = useState('');
+
+    const nullErrors = () => {
+        setLoginError('');
+        setEmailError('');
+        setPasswordError('');
+        setError('');
+    }
 
     const handleLoginChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setLogin(event.target.value);
@@ -97,20 +111,66 @@ const Login: React.FC = () => {
     };
 
     const handleRememberMeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setRememberMe(!event.target.checked);
-        console.log(rememberMe);
+        setRememberMe(event.target.checked);
     };
 
     const handleLogin = async (event: React.FormEvent) => {
         event.preventDefault();
-        console.log(`Login: ${login}, Email: ${email}, Password: ${password}`);
+        setEmailError('');
+        setPasswordError('');
+
+        if (email === '') {
+            setEmailError('Email is required');
+        }
+        if (password === '') {
+            setPasswordError('Password is required');
+        }
+        if (email === '' || password === '') {
+            return;
+        }
+        
+        const result = await authService.login(email, password, rememberMe);
+
+        if (result.success) {
+            navigate('/');  
+        } else {
+            setError(result.message);
+        }
+    }
+
+    const handleRegister = async (event: React.FormEvent) => {
+        event.preventDefault();
+        setLoginError('');
+        setEmailError('');
+        setPasswordError('');
+
+        if (login === '') {
+            setLoginError('Name is required');
+        }
+        if (email === '') {
+            setEmailError('Email is required');
+        }
+        if (password === '') {
+            setPasswordError('Password is required');
+        }
+        if (login === '' || email === '' || password === '') {
+            return;
+        }
+
+        const result = await authService.Register(login, email, password);
+
+        if (result.success) {
+            setIsLogin(true);
+        } else {
+            setError(result.message);
+        }
     }
 
 
     const loginForm = () => (
         <Box className={classes.box}>
             <Box className={classes.imageBox}>
-                <img src="../../public/login.png" alt="Login" className="object-cover h-full w-full" />
+                <img src="/login.png" alt="Login" className="object-cover h-full w-full" />
             </Box>
             <Box className={classes.formBox}>
                 <Typography variant="h2" className="mb-2 text-center bold">Hi there!</Typography>
@@ -129,6 +189,8 @@ const Login: React.FC = () => {
                             autoFocus
                             className={classes.formControl}
                             onChange={handleEmailChange}
+                            error={!!emailError}
+                            helperText={emailError}
                         />
                         <TextField
                             variant="outlined"
@@ -142,11 +204,13 @@ const Login: React.FC = () => {
                             autoComplete="current-password"
                             className={classes.formControl}
                             onChange={handlePasswordChange}
+                            error={!!passwordError}
+                            helperText={passwordError}
                         />
                         <FormControlLabel
                             control={
                                 <Checkbox
-                                    checked={!rememberMe}
+                                    checked={rememberMe}
                                     onChange={handleRememberMeChange}
                                     name="rememberMe"
                                     color="primary"
@@ -169,6 +233,7 @@ const Login: React.FC = () => {
                         >
                             Sign In
                         </Button>
+                        <Typography variant="subtitle2" color="error" className="text-center">{Error}</Typography>
                     </form>
                 ) : (
                     <Box className={classes.socialButtonContainer}>
@@ -218,7 +283,10 @@ const Login: React.FC = () => {
                     <Button
                         variant="text"
                         color="primary"
-                        onClick={() => setIsLogin(!isLogin)}
+                        onClick={() => {
+                            setIsLogin(!isLogin);
+                            nullErrors();
+                        }}
                     > {isLogin ? "Create an account" : "Sign In"} </Button>
                 </Box>
             </Box>
@@ -243,6 +311,8 @@ const Login: React.FC = () => {
                         autoFocus
                         className={classes.formControl}
                         onChange={handleLoginChange}
+                        error={!!loginError}
+                        helperText={loginError}
                     />
                     <TextField
                         variant="outlined"
@@ -255,6 +325,8 @@ const Login: React.FC = () => {
                         autoComplete="email"
                         className={classes.formControl}
                         onChange={handleEmailChange}
+                        error={!!emailError}
+                        helperText={emailError}
                     />
                     <TextField
                         variant="outlined"
@@ -268,6 +340,8 @@ const Login: React.FC = () => {
                         autoComplete="current-password"
                         className={classes.formControl}
                         onChange={handlePasswordChange}
+                        error={!!passwordError}
+                        helperText={passwordError}
                     />
                     <Button
                         type="submit"
@@ -275,18 +349,23 @@ const Login: React.FC = () => {
                         variant="contained"
                         color="primary"
                         className={classes.button}
+                        onClick={handleRegister}
                     > Sign Up </ Button>
+                    <Typography variant="subtitle2" color="error" className="text-center">{Error}</Typography>
                 </form>
                 <Box display="flex" justifyContent="center" mt={2}>
                     <Button
                         variant="text"
                         color="primary"
-                        onClick={() => setIsLogin(!isLogin)}
+                        onClick={() => {
+                            setIsLogin(!isLogin);
+                            nullErrors();
+                        }}
                     > {isLogin ? "Create an account" : "Sign In"} </ Button>
                 </Box>
             </Box>
             <Box className={classes.imageBox}>
-                <img src="../../public/register.png" alt="Register" className="object-cover h-full w-full" />
+                <img src="/register.png" alt="Register" className="object-cover h-full w-full" />
             </Box>
         </Box>
     );

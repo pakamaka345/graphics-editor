@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using SignalingServer.Hubs;
@@ -12,6 +13,7 @@ builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnC
 builder.Services.AddSingleton<MongoDbContext>();
 builder.Services.AddSingleton<ITokenService, TokenService>();
 builder.Services.AddControllers();
+builder.Services.AddCors();
 
 // Налаштування JWT аутентифікації
 builder.Services.AddAuthentication(options => {
@@ -26,6 +28,30 @@ builder.Services.AddAuthentication(options => {
         ValidIssuer = builder.Configuration["JWT:Issuer"],
         ValidAudience = builder.Configuration["JWT:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
+    };
+
+    options.Events = new JwtBearerEvents {
+        OnTokenValidated = async context => {
+            try {
+                var tokenString = context.Request.Headers["Authorization"].ToString().Split(" ")[1];
+                var token = new JwtSecurityToken(tokenString);
+                var tokenService = context.HttpContext.RequestServices.GetRequiredService<ITokenService>();
+
+                if (token == null) {
+                    context.Fail("Unauthorized");
+                    return;
+                }
+
+                var tokenExists = await tokenService.ValidateToken(token.RawData);
+
+                if (!tokenExists) {
+                    context.Fail("Unauthorized");
+                }
+            } catch (Exception ex) {
+                Console.WriteLine("Exception in token validation: " + ex.Message);
+                context.Fail("Unauthorized");
+            }
+        }
     };
 });
 
@@ -44,6 +70,7 @@ var app = builder.Build();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
 app.MapControllers();
 app.MapHub<SignalingHub>("/hub");
