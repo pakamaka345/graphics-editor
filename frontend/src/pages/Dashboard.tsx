@@ -19,6 +19,7 @@ const Dashboard: React.FC = () => {
       Cookies.remove('token');
       navigate('/');
     } catch (error) {
+      alert('An error occurred. Please try again.');
       console.error(error);
     }
   }

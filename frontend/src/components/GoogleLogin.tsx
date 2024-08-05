@@ -10,7 +10,7 @@ const GoogleLoginComponent: React.FC = () => {
     const handleSuccess = async (response: any) => {
         try {
             const serverResponse = await axios.post('http://localhost:5000/api/auth/google', { token: response.credential });
-            const { token } = serverResponse.data.token;
+            const { token } = serverResponse.data;
             Cookies.set('token', token, { expires: 1 });
             navigate('/dashboard');
         } catch (error: any) {
@@ -19,15 +19,16 @@ const GoogleLoginComponent: React.FC = () => {
     };
 
     const handleError = (error: any) => {
-        console.error(error);
+        console.log(error);
     };
 
     return (
         <GoogleOAuthProvider clientId="594073034150-lh9qq65j01fhdm0f5306ar93oeurf0uk.apps.googleusercontent.com">
-            <div className='google-login'>
+            <div className='google-login w-full'>
                 <GoogleLogin
                     onSuccess={handleSuccess}
                     onError={() => handleError}
+                    width={999}
                 />
             </div>
         </GoogleOAuthProvider>
