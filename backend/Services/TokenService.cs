@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
@@ -9,6 +10,8 @@ public interface ITokenService
 {
     string GenerateToken(User user, bool rememberMe);
     Task<bool> ValidateToken(string token);
+    string GeneratePasswordResetToken(User user);
+    Task<bool> ValidatePasswordResetToken(string token, string email);
 }
 
 public class TokenService : ITokenService {
@@ -78,5 +81,38 @@ public class TokenService : ITokenService {
         } catch {
             return false;
         }
+    }
+    public string GeneratePasswordResetToken(User user)
+    {
+        if (user == null)
+        {
+            throw new ArgumentNullException(nameof(user), "User cannot be null.");
+        }
+
+        using (var rng = RandomNumberGenerator.Create())
+        {
+            var tokenData = new byte[32];
+            rng.GetBytes(tokenData);
+
+            var token = Convert.ToBase64String(tokenData);
+
+            return token;
+        }
+    }
+
+    public async Task<bool> ValidatePasswordResetToken(string token, string email)
+    {
+        var authToken = await _context.GetCollection<AuthToken>("authToken")
+            .AsQueryable()
+            .FirstOrDefaultAsync(x => x.Token == token);
+        
+        var user = await _context.GetCollection<User>("users")
+            .AsQueryable()
+            .FirstOrDefaultAsync(u => u.Email == email);
+
+        if (authToken == null || user == null) throw new NullReferenceException("Token or user not found");
+        if(authToken.ExpirationDate < DateTime.UtcNow) throw new Exception("Token has expired");
+
+        return authToken.UserId == user.Id;
     }
 }

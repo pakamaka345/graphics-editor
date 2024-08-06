@@ -38,6 +38,33 @@ class AuthService {
             return { success: false, message: 'An error occurred' };
         }
     }
+
+    async forgotPassword(email: string) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        try {
+            if (!emailRegex.test(email)) {
+                return { success: false, message: 'Invalid email' };
+            }
+            await axios.post(`${this.apiUrl}/forgot-password`, { email });
+            return { success: true, message: '' };
+        } catch (error: any) {
+            if (error.response.status === 400)
+                return { success: false, message: error.response.data };
+            return { success: false, message: 'An error occurred' };
+        }
+    }
+
+    async resetPassword(token: string, password: string, confirmPassword: string, email: string) {
+        try {
+            await axios.put(`${this.apiUrl}/reset-password`, { token, password, confirmPassword, email });
+            return { success: true, message: '' };
+        } catch (error: any) {
+            if (error.response.status === 400)
+                return { success: false, message: error.response.data };
+            return { success: false, message: 'An error occurred' };
+        }
+
+    }
 }
 
 export default new AuthService();

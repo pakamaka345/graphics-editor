@@ -3,6 +3,9 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using SignalingServer.Hubs;
+using Microsoft.AspNetCore.Identity;
+using EmailService;
+using NETCore.MailKit.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -56,6 +59,12 @@ builder.Services.AddAuthentication(options => {
 
 // Додавання авторизації
 builder.Services.AddAuthorization();
+
+var emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
+builder.Services.AddSingleton(emailConfig);
+
+builder.Services.AddScoped<IEmailSender, EmailSender>();
+
 
 // Додавання SignalR
 builder.Services.AddSignalR(o => {

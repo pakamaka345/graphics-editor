@@ -3,6 +3,8 @@ import FacebookLogin from 'react-facebook-login';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFacebook } from '@fortawesome/free-brands-svg-icons';
 
 const CustomFacebookLoginButton: React.FC = () => {
     const navigate = useNavigate();
@@ -30,8 +32,9 @@ const CustomFacebookLoginButton: React.FC = () => {
                 fields="name,picture"
                 callback={responseFacebook}
                 onFailure={handleError}
-                cssClass="h-9 w-full bg-blue-600 text-white rounded-md text-l font-semibold flex items-center justify-center hover:bg-blue-700"
+                cssClass="h-11 w-full bg-blue-600 text-white rounded-md flex items-center justify-center hover:bg-blue-700"
                 textButton={ "Login with Facebook" }
+                icon={<FontAwesomeIcon icon={faFacebook} className="mr-2 h-6 w-6" />}
             />
         </div>
     );

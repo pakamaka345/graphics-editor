@@ -1,36 +1,51 @@
 using Google.Apis.Auth;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 
 [ApiController]
 [Route("api/auth")]
 public class AuthController : ControllerBase
 {
     private readonly ITokenService _tokenService;
+    private readonly MongoDbContext _context;
 
-    public AuthController(ITokenService tokenService)
+    public AuthController(ITokenService tokenService, MongoDbContext context)
     {
         _tokenService = tokenService;
+        _context = context;
     }
 
     [HttpPost("google")]
     public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginRequest request)
     {
-        try {
-            var payload = await GoogleJsonWebSignature.ValidateAsync(request.Token, new GoogleJsonWebSignature.ValidationSettings
+        try
+        {
+            if (request.Email == null || request.Name == null)
             {
-                Audience = new[] { "594073034150-lh9qq65j01fhdm0f5306ar93oeurf0uk.apps.googleusercontent.com" }
-            });
+                return BadRequest(new { error = "Email and Name are required" });
+            }
 
-            var user = new User {
-                Email = payload.Email,
-                Login = payload.Name,
-                Password = BCrypt.Net.BCrypt.HashPassword(payload.Email)
-            };
+            var user = await _context.GetCollection<User>("users")
+                        .AsQueryable()
+                        .FirstOrDefaultAsync(u => u.Email == request.Email, CancellationToken.None);
+
+            if (user == null)
+            {
+                user = new User
+                {
+                    Email = request.Email,
+                    Login = request.Name,
+                    Password = BCrypt.Net.BCrypt.HashPassword(request.Email)
+                };
+                await _context.GetCollection<User>("users").InsertOneAsync(user);
+            }
 
             var token = _tokenService.GenerateToken(user, false);
 
             return Ok(new { token });
-        } catch (Exception ex)
+        }
+        catch (Exception ex)
         {
             return Unauthorized(new { error = "Invalid token", details = ex.Message });
         }
@@ -65,10 +80,11 @@ public class AuthController : ControllerBase
 
     public class GoogleLoginRequest
     {
-        public string? Token { get; set; }
+        public string? Name { get; set; }
+        public string? Email { get; set; }
     }
 
-    public class FacebookLoginRequest 
+    public class FacebookLoginRequest
     {
         public string? Token { get; set; }
         public string? Name { get; set; }

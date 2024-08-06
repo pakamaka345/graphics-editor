@@ -74,3 +74,4 @@ AppData/Local/Temp/
 # JetBrains Rider
 .idea/
 *.sln.iml
+.fake

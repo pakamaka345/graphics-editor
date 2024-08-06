@@ -7,7 +7,7 @@ namespace SignalingServer.Hubs {
     
     [Authorize]
     public class SignalingHub : Hub {
-        public static Dictionary<string, List<string>> ConnectedClients = new Dictionary<string, List<string>>();
+        public static Dictionary<string, List<string>> ConnectedClients = [];
 
         public async Task SendMessage(object message, string roomName) {
             await EmitLog("Client " + Context.ConnectionId + " said: " + message, roomName);
