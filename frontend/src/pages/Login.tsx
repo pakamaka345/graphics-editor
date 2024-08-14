@@ -129,18 +129,18 @@ const Login: React.FC = () => {
                                 id="rememberMe"
                                 checked={rememberMe}
                                 onChange={handleRememberMeChange}
-                                className="mr-2"
+                                className="mr-2 cursor-pointer"
                             />
-                            <label htmlFor="rememberMe">Remember me</label>
+                            <label htmlFor="rememberMe" className="hover:underline cursor-pointer">Remember me</label>
                         </div>
                         <button
                             type="button"
-                            className="text-blue-500 mb-4"
+                            className="relative text-blue-500 mb-4 hover:underline"
                             onClick={() => navigate('/forgot-password')}
                         >Forgot password?</button>
                         <button
                             type="submit"
-                            className="bg-blue-500 text-white py-2 rounded mb-4"
+                            className="bg-blue-500 text-white py-2 rounded mb-4 hover:bg-blue-600 transition-colors duration-300"
                             onClick={handleLogin}
                         >
                             Sign In
@@ -167,17 +167,17 @@ const Login: React.FC = () => {
                         </div>
                     </div>
                 )}
-                <div className="flex justify-center mt-1">
+                <div className="flex justify-center mt-1 w-full">
                     <button
-                        className="text-blue-500"
+                        className="text-blue-500 w-full hover:underline"
                         onClick={() => setIsEmail(!isEmail)}
                     >
                         {isEmail ? "Sign in with social accounts" : "Sign in with email"}
                     </button>
                 </div>
-                <div className="flex justify-center mt-1">
+                <div className="flex justify-center mt-1 w-full">
                     <button
-                        className="text-blue-500"
+                        className="text-blue-500 w-full hover:underline"
                         onClick={() => {
                             setIsLogin(!isLogin);
                             nullErrors();

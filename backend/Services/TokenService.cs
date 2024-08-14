@@ -82,7 +82,7 @@ public class TokenService : ITokenService {
             return false;
         }
     }
-    public string GeneratePasswordResetToken(User user)
+    public string GenerateRandomToken(User user)
     {
         if (user == null)
         {
@@ -100,7 +100,7 @@ public class TokenService : ITokenService {
         }
     }
 
-    public async Task<bool> ValidatePasswordResetToken(string token, string email)
+    public async Task<bool> ValidateRandomToken(string token, string email)
     {
         var authToken = await _context.GetCollection<AuthToken>("authToken")
             .AsQueryable()
