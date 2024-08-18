@@ -3,9 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using SignalingServer.Hubs;
-using Microsoft.AspNetCore.Identity;
 using EmailService;
-using NETCore.MailKit.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +12,7 @@ builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnC
 // Налаштування служб
 builder.Services.AddSingleton<MongoDbContext>();
 builder.Services.AddSingleton<ITokenService, TokenService>();
+builder.Services.AddSingleton<IImageService, ImageService>();
 builder.Services.AddControllers();
 builder.Services.AddCors();
 

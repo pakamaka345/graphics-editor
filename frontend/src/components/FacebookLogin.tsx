@@ -3,15 +3,17 @@ import FacebookLogin from 'react-facebook-login';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
+import { useBaseUrl } from '../contexts/BaseUrlContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFacebook } from '@fortawesome/free-brands-svg-icons';
 
 const CustomFacebookLoginButton: React.FC = () => {
     const navigate = useNavigate();
-    
+    const baseUrl = useBaseUrl();
+
     const responseFacebook = async (response: any) => {
         try {
-            const serverResponse = await axios.post('http://localhost:5000/api/auth/facebook', { token: response.accessToken, name: response.name });
+            const serverResponse = await axios.post(`${baseUrl}/auth/facebook`, { token: response.accessToken, name: response.name });
             const { token } = serverResponse.data;
             Cookies.set('token', token, { expires: 1 });
             navigate('/dashboard');

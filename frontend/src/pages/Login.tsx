@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useBaseUrl } from "../contexts/BaseUrlContext";
 import authService from '../Services/AuthService';
 import GoogleLoginComponent from "../components/GoogleLogin";
 import FacebookLoginComponent from "../components/FacebookLogin";
@@ -9,6 +10,8 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const Login: React.FC = () => {
     const navigate = useNavigate();
+    const baseUrl = useBaseUrl();
+
     const [isLogin, setIsLogin] = useState(true);
     const [isEmail, setIsEmail] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
@@ -58,7 +61,7 @@ const Login: React.FC = () => {
             return;
         }
 
-        const result = await authService.login(email, password, rememberMe);
+        const result = await authService.login(email, password, rememberMe, baseUrl);
 
         if (result.success) {
             navigate('/dashboard');
@@ -86,7 +89,7 @@ const Login: React.FC = () => {
             return;
         }
 
-        const result = await authService.Register(login, email, password);
+        const result = await authService.Register(login, email, password, baseUrl);
 
         if (result.success) {
             setIsLogin(true);

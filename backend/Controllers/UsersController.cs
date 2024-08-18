@@ -52,6 +52,8 @@ public class UsersController : ControllerBase
         }
         var token = _tokenService.GenerateToken(user, model.rememberMe);
 
+        _context.GetCollection<AuthToken>("authToken").DeleteMany(t => t.ExpirationDate < DateTime.UtcNow);
+
         return Ok(new { token });
     }
 
@@ -94,7 +96,7 @@ public class UsersController : ControllerBase
         if (user == null)
             return BadRequest("User with this email does not exist");
 
-        var token = _tokenService.GeneratePasswordResetToken(user);
+        var token = _tokenService.GenerateRandomToken(user);
 
         var ResetToken = new AuthToken
         {
@@ -122,7 +124,7 @@ public class UsersController : ControllerBase
     {
         try
         {
-            if (await _tokenService.ValidatePasswordResetToken(model.Token, model.Email) == false)
+            if (await _tokenService.ValidateRandomToken(model.Token, model.Email) == false)
             {
                 return BadRequest("Invalid token");
             }

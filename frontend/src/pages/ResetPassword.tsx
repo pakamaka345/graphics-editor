@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useBaseUrl } from '../contexts/BaseUrlContext';
 import AuthService from '../Services/AuthService';
 
 function useQuery() {
@@ -7,6 +8,7 @@ function useQuery() {
 }
 
 const ResetPassword: React.FC = () => {
+    const baseUrl = useBaseUrl();
     const query = useQuery();
     const token = query.get('token')?.replace(/\s/g, '+');
     const email = query.get('email');
@@ -41,7 +43,7 @@ const ResetPassword: React.FC = () => {
             return;
         }
         if (!token || !email) return;
-        const response = await AuthService.resetPassword(token, password, confirmPassword, email);
+        const response = await AuthService.resetPassword(token, password, confirmPassword, email, baseUrl);
         if (response.success) {
             alert('Password reset successfully');
             navigate('/login');

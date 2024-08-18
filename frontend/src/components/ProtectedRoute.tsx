@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from 'react';
+import { useBaseUrl } from '../contexts/BaseUrlContext';
 import { Outlet, Navigate} from 'react-router-dom';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
 const ProtectedRoute = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const baseUrl = useBaseUrl();
 
   useEffect(() => {
     const checkAuth = async () => {
       const token = Cookies.get('token');
       if (token) {
         try {
-          await axios.get('http://localhost:5000/api/users/checkAuth', {
+          await axios.get(`${baseUrl}/users/checkAuth`, {
             headers: {
               Authorization: `Bearer ${token}`
             }

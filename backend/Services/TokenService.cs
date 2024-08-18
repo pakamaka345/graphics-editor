@@ -10,8 +10,9 @@ public interface ITokenService
 {
     string GenerateToken(User user, bool rememberMe);
     Task<bool> ValidateToken(string token);
-    string GeneratePasswordResetToken(User user);
-    Task<bool> ValidatePasswordResetToken(string token, string email);
+    string GenerateRandomToken(User user);
+    Task<bool> ValidateRandomToken(string token, string email);
+    Task<string> GetUserIdBytoken(string token);
 }
 
 public class TokenService : ITokenService {
@@ -114,5 +115,14 @@ public class TokenService : ITokenService {
         if(authToken.ExpirationDate < DateTime.UtcNow) throw new Exception("Token has expired");
 
         return authToken.UserId == user.Id;
+    }
+
+    public async Task<string> GetUserIdBytoken(string token)
+    {
+        var authToken = await _context.GetCollection<AuthToken>("authToken")
+            .AsQueryable()
+            .FirstOrDefaultAsync(x => x.Token == token);
+        
+        return authToken.UserId;
     }
 }

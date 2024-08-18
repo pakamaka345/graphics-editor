@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import authService from '../Services/AuthService';
+import { useBaseUrl } from '../contexts/BaseUrlContext';
 
 const ForgotPassword = () => {
+    const baseUrl = useBaseUrl();
+
     const [email, setEmail] = useState('');
     const [emailError, setEmailError] = useState('');
     const [messageSent, setMessageSent] = useState(false);
@@ -19,7 +22,7 @@ const ForgotPassword = () => {
         }
 
         try {
-            const result = await authService.forgotPassword(email);
+            const result = await authService.forgotPassword(email, baseUrl);
             if (result.success) {
                 setMessageSent(true);
             } else {

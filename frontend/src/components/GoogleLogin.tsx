@@ -1,12 +1,14 @@
 import React, { useEffect } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import { useBaseUrl } from '../contexts/BaseUrlContext';
 import { useNavigate } from 'react-router-dom';
 import { useGoogleLogin } from '@react-oauth/google';
 import { gapi } from 'gapi-script';
 
 const GoogleLoginComponent: React.FC = () => {
     const navigate = useNavigate();
+    const baseUrl = useBaseUrl();
 
     useEffect(() => {
         function start() {
@@ -30,7 +32,7 @@ const GoogleLoginComponent: React.FC = () => {
 
             const { name, email } = userInfo.result;
 
-            const serverResponse = await axios.post('http://localhost:5000/api/auth/google', { name, email });
+            const serverResponse = await axios.post(`${baseUrl}/auth/google`, { name, email });
             const { token } = serverResponse.data;
             Cookies.set('token', token, { expires: 1 });
             navigate('/dashboard');
