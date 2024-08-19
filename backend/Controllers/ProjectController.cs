@@ -62,7 +62,7 @@ public class ProjectController : ControllerBase
             {
                 Id = p.Id,
                 Name = p.Name,
-                ColoboratorsCount = p.Coloborators?.Count ?? 0,
+                CollaboratorsCount = p.Collaborators?.Count ?? 0,
                 ImagePreview = p.PreviewImage,
                 CreatedAt = p.CreatedDate,
                 LastUpdatedAt = p.LastModifiedDate
@@ -117,7 +117,7 @@ public class ProjectsGetModel
 {
     public required string Id { get; set; }
     public required string Name { get; set; }
-    public int ColoboratorsCount { get; set; }
+    public int CollaboratorsCount { get; set; }
     public string? ImagePreview { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime LastUpdatedAt { get; set; }

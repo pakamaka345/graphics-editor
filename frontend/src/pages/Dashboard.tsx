@@ -5,6 +5,7 @@ import Cookies from 'js-cookie';
 import { useBaseUrl } from '../contexts/BaseUrlContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserCircle, faSignOutAlt, faUser, faCog, faPlus, faClock, faFolderOpen } from '@fortawesome/free-solid-svg-icons';
+import UploadImage from '../components/UploadImage';
 import Footer from '../components/Footer';
 import ProjectCard from '../components/ProjectCard';
 import { jwtDecode } from "jwt-decode";
@@ -146,7 +147,6 @@ const Dashboard: React.FC = () => {
     }
 
     const image = await createImage(width, height);
-    console.log(image);
     if (image === "Error") {
       setError('Error creating image');
       return;
@@ -226,11 +226,14 @@ const Dashboard: React.FC = () => {
           Recent projects
         </h2>
         <div className="grid grid-cols-4 gap-0">
-          <div onClick={createNew} className="bg-cyan-600 w-72 h-62 flex flex-col justify-center items-center text-gray-800 rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-200 ease-in-out cursor-pointer">
-            <div className="flex flex-col items-center">
-              <FontAwesomeIcon icon={faPlus} size="5x" className="text-white mb-2" />
-              <p className="text-2xl font-semibold text-white">New Project</p>
+          <div className="flex space-y-2 flex-col items-center justify-center">
+            <div onClick={createNew} className="bg-cyan-600 w-72 h-32 flex flex-col justify-center items-center text-gray-800 rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-200 ease-in-out cursor-pointer">
+              <div className="flex flex-col items-center">
+                <FontAwesomeIcon icon={faPlus} size="3x" className="text-white mb-2" />
+                <p className="text-2xl font-semibold text-white">New Project</p>
+              </div>
             </div>
+            <UploadImage />
           </div>
 
           {recentProjects.map((project) => (
@@ -341,5 +344,5 @@ interface ProjectCard {
   createdAt: string;
   lastUpdatedAt: string;
   imagePreview: string;
-  coloboratorsCount: number;
+  collaboratorsCount: number;
 }

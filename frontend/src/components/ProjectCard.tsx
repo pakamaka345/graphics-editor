@@ -13,7 +13,7 @@ interface ProjectCardProps {
         createdAt: string;
         lastUpdatedAt: string;
         imagePreview: string;
-        coloboratorsCount: number;
+        collaboratorsCount: number;
     };
     onDelete: (projectId: string) => void;
 }
@@ -57,7 +57,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete }) => {
     }
 
     return (
-        <div className="bg-cyan-600 w-72 h-62 flex flex-col justify-center items-center text-gray-800 rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-200 ease-in-out">
+        <div className="bg-cyan-600 w-72 h-64 flex flex-col justify-center items-center text-gray-800 rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-200 ease-in-out">
             <div className = "absolute top-0 left-0 p-2 bg-cyan-500 text-white rounded-br-lg">
                 <FontAwesomeIcon icon={faClockRotateLeft} />
                 <span className="ml-2">{project.lastUpdatedAt.split("T")[0]}</span>
@@ -65,7 +65,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete }) => {
             <div onClick={handleDelete} className="absolute top-0 right-0 p-2 bg-cyan-500 text-white rounded-bl-lg hover:bg-cyan-700 cursor-pointer">
                 <FontAwesomeIcon icon={faTrashCan} />
             </div>
-            <div onClick={handleGetImage} className="w-full h-full p-4 mt-2 flex flex-col">
+            <div onClick={handleGetImage} className="w-full h-full p-4 mt-8 flex flex-col">
                 <div className="flex flex-col justify-center items-center h-48">
                     <img
                         src={project.imagePreview}
@@ -73,10 +73,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete }) => {
                         className="w-full h-full object-contain rounded-lg"
                     />
                 </div>
-                <div className="flex justify-between items-center mt-4">
+                <div className="flex justify-between items-center">
                     <p className="text-2xl font-semibold truncate text-white">{project.name}</p>
                     <div className="flex items-center text-white">
-                        <span className="text-2xl mr-2">{project.coloboratorsCount}</span>
+                        <span className="text-2xl mr-2">{project.collaboratorsCount}</span>
                         <FontAwesomeIcon icon={faUsers} />
                     </div>
                 </div>
