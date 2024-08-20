@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useBaseUrl } from '../contexts/BaseUrlContext';
-import Hero from "../components/Hero";
-import Footer from "../components/Footer";
+import { useBaseUrl } from '../Contexts/BaseUrlContext';
+import Hero from "../Components/Hero";
+import Footer from "../Components/Footer";
 import Cookies from "js-cookie";
 import axios from "axios";
 

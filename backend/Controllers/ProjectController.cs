@@ -1,3 +1,4 @@
+using System.Drawing;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
@@ -100,6 +101,23 @@ public class ProjectController : ControllerBase
         await _context.GetCollection<Project>("projects").DeleteOneAsync(p => p.Id == id);
 
         return Ok("Project deleted successfully.");
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> SaveProject(string id, [FromBody] string image) {
+        var project = await _context.GetCollection<Project>("projects")
+                                    .Find(p => p.Id == id)
+                                    .FirstOrDefaultAsync();
+
+        if (project == null) return NotFound("Project not found.");
+
+        project.Image = image;
+        project.PreviewImage = await _imageService.CompressImage(image);
+        project.LastModifiedDate = DateTime.Now;
+
+        await _context.GetCollection<Project>("projects").ReplaceOneAsync(p => p.Id == id, project);
+
+        return Ok("Project saved successfully. ");
     }
 }
 

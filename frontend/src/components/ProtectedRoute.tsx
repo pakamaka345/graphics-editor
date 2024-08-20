@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useBaseUrl } from '../contexts/BaseUrlContext';
+import { useBaseUrl } from '../Contexts/BaseUrlContext';
 import { Outlet, Navigate} from 'react-router-dom';
 import axios from 'axios';
 import Cookies from 'js-cookie';
