@@ -49,6 +49,7 @@ public class ProjectController : ControllerBase
             var userId = await _tokenService.GetUserIdBytoken(token);
             var projects = await _context.GetCollection<Project>("projects")
                                          .Find(p => p.UserId == userId)
+                                         .SortByDescending(p => p.LastModifiedDate)
                                          .Skip((pageNumber - 1) * pageSize)
                                          .Limit(pageSize)
                                          .ToListAsync();

@@ -24,3 +24,16 @@ C:\project\webSites\graphics-editor\EmailService\obj\Debug\net8.0\EmailService.d
 C:\project\webSites\graphics-editor\EmailService\obj\Debug\net8.0\refint\EmailService.dll
 C:\project\webSites\graphics-editor\EmailService\obj\Debug\net8.0\EmailService.pdb
 C:\project\webSites\graphics-editor\EmailService\obj\Debug\net8.0\ref\EmailService.dll
+D:\Website dev\graphics-editor\EmailService\bin\Debug\net8.0\EmailService.deps.json
+D:\Website dev\graphics-editor\EmailService\bin\Debug\net8.0\EmailService.dll
+D:\Website dev\graphics-editor\EmailService\bin\Debug\net8.0\EmailService.pdb
+D:\Website dev\graphics-editor\EmailService\obj\Debug\net8.0\EmailService.csproj.AssemblyReference.cache
+D:\Website dev\graphics-editor\EmailService\obj\Debug\net8.0\EmailService.GeneratedMSBuildEditorConfig.editorconfig
+D:\Website dev\graphics-editor\EmailService\obj\Debug\net8.0\EmailService.AssemblyInfoInputs.cache
+D:\Website dev\graphics-editor\EmailService\obj\Debug\net8.0\EmailService.AssemblyInfo.cs
+D:\Website dev\graphics-editor\EmailService\obj\Debug\net8.0\EmailService.csproj.CoreCompileInputs.cache
+D:\Website dev\graphics-editor\EmailService\obj\Debug\net8.0\EmailService.sourcelink.json
+D:\Website dev\graphics-editor\EmailService\obj\Debug\net8.0\EmailService.dll
+D:\Website dev\graphics-editor\EmailService\obj\Debug\net8.0\refint\EmailService.dll
+D:\Website dev\graphics-editor\EmailService\obj\Debug\net8.0\EmailService.pdb
+D:\Website dev\graphics-editor\EmailService\obj\Debug\net8.0\ref\EmailService.dll
