@@ -41,19 +41,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({project, onDelete}) => {
 
     const handleGetImage = async () => {
         try {
-            const response = await axios.get(`${baseUrl}/projects/${project.id}`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${Cookies.get('token')}`
-                    }
-                });
-
-            const newProject = {
-                name: response.data.name,
-                image: response.data.image,
-            };
-
-            navigate(`/projects/${project.id}`, {state: {project: newProject}});
+            navigate(`/projects/${project.id}`);
         } catch (error: any) {
             console.error('Error getting project:', error.response.data);
         }

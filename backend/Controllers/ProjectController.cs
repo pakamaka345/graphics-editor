@@ -22,16 +22,18 @@ public class ProjectController : ControllerBase
     [HttpPost("create")]
     public async Task<IActionResult> Create([FromBody] ProjectCreateModel model)
     {
+        string image = await _imageService.CreateImage(model.Width, model.Height);
+
         var project = new Project
         {
             Name = model.Name,
             Width = model.Width,
             Height = model.Height,
             UserId = model.UserId,
-            CreatedDate = model.CreatedAt,
-            LastModifiedDate = model.CreatedAt,
-            Image = model.Image,
-            PreviewImage = await _imageService.CompressImage(model.Image)
+            CreatedDate = DateTime.Now,
+            LastModifiedDate = DateTime.Now,
+            Image = image,
+            PreviewImage = await _imageService.CompressImage(image)
         };
 
         await _context.GetCollection<Project>("projects").InsertOneAsync(project);
@@ -128,8 +130,6 @@ public class ProjectCreateModel
     public int Width { get; set; }
     public int Height { get; set; }
     public required string UserId { get; set; }
-    public DateTime CreatedAt { get; set; }
-    public required string Image { get; set; }
 }
 
 public class ProjectsGetModel

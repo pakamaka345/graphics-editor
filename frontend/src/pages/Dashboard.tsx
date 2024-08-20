@@ -33,7 +33,6 @@ const Dashboard: React.FC = () => {
     const [allProjects, setAllProjects] = useState<ProjectCard[]>([]);
     const [isFetching, setIsFetching] = useState(true);
     const [IsMoreToFetch, setIsMoreToFetch] = useState(true);
-
     const PageNumber = useRef(2);
 
     const fetchProjects = async () => {
@@ -102,21 +101,6 @@ const Dashboard: React.FC = () => {
 
         fetchProjectsOnStart().then(() => setIsFetching(false));
     }, []);
-
-    const createImage = async (width: number, height: number) => {
-        const canvas = document.createElement('canvas');
-        canvas.width = width;
-        canvas.height = height;
-        const context = canvas.getContext('2d');
-        if (!context) {
-            return "Error";
-        }
-        context.fillStyle = 'white';
-        context.fillRect(0, 0, width, height);
-        const whiteImage = canvas.toDataURL('image/png');
-
-        return whiteImage;
-    };
 
     const logout = async () => {
         try {
@@ -192,31 +176,16 @@ const Dashboard: React.FC = () => {
             setError('Width and height must be greater than 0');
             return;
         }
-
-        const image = await createImage(width, height);
-        if (image === "Error") {
-            setError('Error creating image');
-            return;
-        }
-        const project = {
-            name: newProject.name,
-            image: image
-        }
         const token = Cookies.get('token')!;
         const userId = jwtDecode(token).sub;
 
-        const createdAt = new Date().toISOString();
-
         try {
-            // noinspection JSAnnotator
             const response = await axios.post(`${baseUrl}/projects/create`,
                 {
-                    name: project.name,
+                    name: newProject.name,
                     width: width,
                     height: height,
                     userId: userId,
-                    createdAt: createdAt,
-                    image: project.image
                 },
                 {
                     headers: {
@@ -224,7 +193,7 @@ const Dashboard: React.FC = () => {
                     }
                 }
             );
-            navigate(`/projects/${response.data.id}`, {state: {project}});
+            navigate(`/projects/${response.data.id}`);
 
         } catch (error) {
             setError('Error with http request');
