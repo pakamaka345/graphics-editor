@@ -1,11 +1,19 @@
 import React, { useRef, useEffect, useState } from 'react';
+import { useBaseUrl } from '../Contexts/BaseUrlContext';
+import axios from 'axios';
+import Cookies from 'js-cookie';
 
 interface CanvasProps {
+    imageId: string;
     image: string;
     brushActive: boolean;
+    saveActive: boolean;
+
+    setImage: (image: string) => void;
 }
 
-const Canvas: React.FC<CanvasProps> = ({ image, brushActive }) => {
+const Canvas: React.FC<CanvasProps> = ({ imageId, image, brushActive, saveActive, setImage }) => {
+    const baseUrl = useBaseUrl();
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [isDrawing, setIsDrawing] = useState(false);
 
@@ -43,6 +51,31 @@ const Canvas: React.FC<CanvasProps> = ({ image, brushActive }) => {
             canvasRef.current.style.cursor = brushActive ? 'crosshair' : 'default';
         }
     }, [brushActive]);
+
+    useEffect(() => {
+        const saveDrawing = () => {
+            if (!saveActive || !canvasRef.current) return;
+    
+            const canvas = canvasRef.current;
+            const base64 = canvas.toDataURL('image/png');
+            const token = Cookies.get('token');
+            
+            try {
+                axios.put(`${baseUrl}/projects/${imageId}`, { image: base64 }, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                alert('Drawing saved successfully!');
+                setImage(base64);
+            } catch (error) {
+                console.error('Error saving drawing:', error);
+            }
+        };
+
+        saveDrawing();
+    }, [saveActive]);
 
     const startDrawing = (event: React.MouseEvent) => {
         if (!brushActive) return;

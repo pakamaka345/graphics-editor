@@ -39,7 +39,7 @@ public class ProjectController : ControllerBase
         return Ok(new { id = project.Id });
     }
 
-    [HttpGet]
+   [HttpGet]
     public async Task<IActionResult> GetAllProjects([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
     {
         try
@@ -50,6 +50,7 @@ public class ProjectController : ControllerBase
             var userId = await _tokenService.GetUserIdBytoken(token);
             var projects = await _context.GetCollection<Project>("projects")
                                          .Find(p => p.UserId == userId)
+                                         .SortByDescending(p => p.LastModifiedDate)
                                          .Skip((pageNumber - 1) * pageSize)
                                          .Limit(pageSize)
                                          .ToListAsync();
@@ -103,19 +104,19 @@ public class ProjectController : ControllerBase
         return Ok("Project deleted successfully.");
     }
 
-    [HttpPut("{id}")]
-    public async Task<IActionResult> SaveProject(string id, [FromBody] string image) {
+    [HttpPut("{imageId}")]
+    public async Task<IActionResult> SaveProject(string imageId, [FromBody] SaveProjectModel model) {
         var project = await _context.GetCollection<Project>("projects")
-                                    .Find(p => p.Id == id)
+                                    .Find(p => p.Id == imageId)
                                     .FirstOrDefaultAsync();
 
         if (project == null) return NotFound("Project not found.");
 
-        project.Image = image;
-        project.PreviewImage = await _imageService.CompressImage(image);
+        project.Image = model.Image;
+        project.PreviewImage = await _imageService.CompressImage(model.Image);
         project.LastModifiedDate = DateTime.Now;
 
-        await _context.GetCollection<Project>("projects").ReplaceOneAsync(p => p.Id == id, project);
+        await _context.GetCollection<Project>("projects").ReplaceOneAsync(p => p.Id == imageId, project);
 
         return Ok("Project saved successfully. ");
     }
@@ -139,4 +140,9 @@ public class ProjectsGetModel
     public string? ImagePreview { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime LastUpdatedAt { get; set; }
+}
+
+public class SaveProjectModel
+{
+    public required string Image { get; set; }
 }
