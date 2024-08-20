@@ -1,13 +1,13 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import ProtectedRoute from './components/ProtectedRoute';
-import { BaseUrlProvider } from './contexts/BaseUrlContext';
-import Home from './pages/Home';
-import Login from './pages/Login';
-import ForgotPassword from './pages/ForgotPassword';
-import ResetPassword from './pages/ResetPassword';
-import Dashboard from './pages/Dashboard';
-import DrawingPage from './pages/DrawingPage';
+import ProtectedRoute from './Components/ProtectedRoute';
+import { BaseUrlProvider } from './Contexts/BaseUrlContext';
+import Home from './Pages/Home';
+import Login from './Pages/Login';
+import ForgotPassword from './Pages/ForgotPassword';
+import ResetPassword from './Pages/ResetPassword';
+import Dashboard from './Pages/Dashboard';
+import DrawingPage from './Pages/DrawingPage';
 
 
 

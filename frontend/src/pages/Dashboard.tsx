@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import { useBaseUrl } from '../contexts/BaseUrlContext';
+import { useBaseUrl } from '../Contexts/BaseUrlContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserCircle, faSignOutAlt, faUser, faCog, faPlus, faClock, faFolderOpen } from '@fortawesome/free-solid-svg-icons';
-import UploadImage from '../components/UploadImage';
-import Footer from '../components/Footer';
-import ProjectCard from '../components/ProjectCard';
+import UploadImage from '../Components/UploadImage';
+import Footer from '../Components/Footer';
+import ProjectCard from '../Components/ProjectCard';
 import { jwtDecode } from "jwt-decode";
 
 const Dashboard: React.FC = () => {

@@ -3,7 +3,7 @@ import FacebookLogin from 'react-facebook-login';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
-import { useBaseUrl } from '../contexts/BaseUrlContext';
+import { useBaseUrl } from '../Contexts/BaseUrlContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFacebook } from '@fortawesome/free-brands-svg-icons';
 

@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useBaseUrl } from "../contexts/BaseUrlContext";
+import { useBaseUrl } from "../Contexts/BaseUrlContext";
 import authService from '../Services/AuthService';
-import GoogleLoginComponent from "../components/GoogleLogin";
-import FacebookLoginComponent from "../components/FacebookLogin";
+import GoogleLoginComponent from "../Components/GoogleLogin";
+import FacebookLoginComponent from "../Components/FacebookLogin";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faApple } from "@fortawesome/free-brands-svg-icons";
 import { GoogleOAuthProvider } from "@react-oauth/google";

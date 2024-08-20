@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useBaseUrl } from '../contexts/BaseUrlContext';
+import { useBaseUrl } from '../Contexts/BaseUrlContext';
 import AuthService from '../Services/AuthService';
 
 function useQuery() {

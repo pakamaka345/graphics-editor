@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useBaseUrl } from '../contexts/BaseUrlContext';
+import { useBaseUrl } from '../Contexts/BaseUrlContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUpload } from '@fortawesome/free-solid-svg-icons';
 import { jwtDecode } from "jwt-decode";

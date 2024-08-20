@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import authService from '../Services/AuthService';
-import { useBaseUrl } from '../contexts/BaseUrlContext';
+import { useBaseUrl } from '../Contexts/BaseUrlContext';
 
 const ForgotPassword = () => {
     const baseUrl = useBaseUrl();
