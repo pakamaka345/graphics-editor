@@ -41,6 +41,26 @@ public class ProjectController : ControllerBase
         return Ok(new { id = project.Id });
     }
 
+    [HttpPost("upload")]
+    public async Task<IActionResult> Upload([FromBody] ProjectUploadModel model)
+    {
+        var project = new Project
+        {
+            Name = model.Name,
+            Width = model.Width,
+            Height = model.Height,
+            UserId = model.UserId,
+            CreatedDate = DateTime.Now,
+            LastModifiedDate = DateTime.Now,
+            Image = model.Image,
+            PreviewImage = await _imageService.CompressImage(model.Image)
+        };
+
+        await _context.GetCollection<Project>("projects").InsertOneAsync(project);
+
+        return Ok(new { id = project.Id });
+    }
+
    [HttpGet]
     public async Task<IActionResult> GetAllProjects([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
     {
@@ -130,6 +150,15 @@ public class ProjectCreateModel
     public int Width { get; set; }
     public int Height { get; set; }
     public required string UserId { get; set; }
+}
+
+public class ProjectUploadModel
+{
+    public required string Name { get; set; }
+    public required int Width { get; set; }
+    public required int Height { get; set; }
+    public required string UserId { get; set; }
+    public required string Image { get; set; }
 }
 
 public class ProjectsGetModel
