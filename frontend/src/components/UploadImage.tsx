@@ -45,11 +45,9 @@ const UploadImage: React.FC = () => {
 
     const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
-        console.log('File:', file);
         if (file) {
             try {
                 const base64String = await getBase64String(file);
-                console.log('Base64:', base64String);
                 const dimensions = await getImageDimensions(base64String);
 
                 const token = Cookies.get('token')!;
@@ -57,15 +55,12 @@ const UploadImage: React.FC = () => {
                 
                 const name = file.name;
 
-                const createdAt = new Date().toISOString();
-
-                const response = await axios.post(`${baseUrl}/projects/create`,
+                const response = await axios.post(`${baseUrl}/projects/upload`,
                     {
                         name: name,
                         width: dimensions.width,
                         height: dimensions.height,
                         userId: userId,
-                        createdAt: createdAt,
                         image: base64String,
                     },
                     {
@@ -73,13 +68,8 @@ const UploadImage: React.FC = () => {
                             Authorization: `Bearer ${token}`
                         }
                     });
-
-                const project = {
-                    name: name,
-                    image: base64String
-                }
                 
-                navigate(`/projects/${response.data.id}`, { state: { project: project } }); 
+                navigate(`/projects/${response.data.id}`); 
             } catch (error) {
                 console.error('Error reading file:', error);
             }
