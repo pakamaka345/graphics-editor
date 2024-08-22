@@ -49,14 +49,13 @@ const ProjectCard: React.FC<ProjectCardProps> = ({project, onDelete}) => {
 
     return (
         <div
-            className="bg-cyan-600 w-72 h-64 flex flex-col justify-center items-center text-gray-800 rounded-xl
-                    shadow-lg transform hover:scale-105 transition-transform duration-200 ease-in-out cursor-pointer">
-            <div className="absolute top-0 left-0 p-2 bg-cyan-500 text-white rounded-br-lg">
+        className="bg-cyan-600 bg-opacity-30 backdrop-blur-md w-72 h-64 flex flex-col justify-center items-center text-gray-800 rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-200 ease-in-out cursor-pointer">
+            <div className="absolute top-0 left-0 p-2 bg-cyan-700 text-white rounded-br-lg">
                 <FontAwesomeIcon icon={faClockRotateLeft}/>
                 <span className="ml-2">{dateString}</span>
             </div>
             <div onClick={handleDelete}
-                 className="absolute top-0 right-0 p-2 bg-cyan-500 text-white rounded-bl-lg hover:bg-cyan-700 cursor-pointer">
+                 className="absolute top-0 right-0 p-2 bg-cyan-700 text-white rounded-bl-lg hover:bg-cyan-800 cursor-pointer">
                 <FontAwesomeIcon icon={faTrashCan}/>
             </div>
             <div onClick={handleGetImage} className="w-full h-full p-4 mt-8 flex flex-col">

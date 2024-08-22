@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 import { useBaseUrl } from '../Contexts/BaseUrlContext';
 import ToolBar from '../Components/ToolBar';
 import Canvas from '../Components/Canvas';
-import { Vortex, Oval } from 'react-loader-spinner';
+import { Vortex } from 'react-loader-spinner';
 
 const DrawingPage: React.FC = () => {
     const baseUrl = useBaseUrl();
