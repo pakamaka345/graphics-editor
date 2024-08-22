@@ -4,19 +4,33 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using SignalingServer.Hubs;
 using EmailService;
+using Amazon.S3;
+using Amazon;
+using Amazon.Extensions.NETCore.Setup;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add Configuration file to the project
 builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 
-// Налаштування служб
+// Add services to the container.
 builder.Services.AddSingleton<MongoDbContext>();
 builder.Services.AddSingleton<ITokenService, TokenService>();
 builder.Services.AddSingleton<IImageService, ImageService>();
 builder.Services.AddControllers();
 builder.Services.AddCors();
 
-// Налаштування JWT аутентифікації
+// Add AWS S3 Service
+builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
+builder.Services.AddAWSService<IAmazonS3>();
+builder.Services.AddSingleton<IS3Service, S3Service>(sp =>
+{
+    var s3Client = sp.GetRequiredService<IAmazonS3>();
+    var bucketName = builder.Configuration["AWS:BucketName"]!;
+    return new S3Service(s3Client, bucketName);
+});
+
+// Add JWT Authentication
 builder.Services.AddAuthentication(options => {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -28,7 +42,7 @@ builder.Services.AddAuthentication(options => {
         ValidateIssuerSigningKey = true,
         ValidIssuer = builder.Configuration["JWT:Issuer"],
         ValidAudience = builder.Configuration["JWT:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]!))
     };
 
     options.Events = new JwtBearerEvents {
@@ -56,16 +70,17 @@ builder.Services.AddAuthentication(options => {
     };
 });
 
-// Додавання авторизації
+// Add Authorization
 builder.Services.AddAuthorization();
 
+// Add Email Service
 var emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
-builder.Services.AddSingleton(emailConfig);
+builder.Services.AddSingleton(emailConfig!);
 
 builder.Services.AddScoped<IEmailSender, EmailSender>();
 
 
-// Додавання SignalR
+// Add SignalR
 builder.Services.AddSignalR(o => {
     o.MaximumReceiveMessageSize = 102400000;
     o.EnableDetailedErrors = true;
@@ -73,7 +88,7 @@ builder.Services.AddSignalR(o => {
 
 var app = builder.Build();
 
-// Конфігурація HTTP конвеєра
+// Configure the HTTP request pipeline.
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
