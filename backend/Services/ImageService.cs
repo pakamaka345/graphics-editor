@@ -1,14 +1,30 @@
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Jpeg;
+using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 
 public interface IImageService
 {
+    Task<string> CreateImage(int width, int height);
     Task<string> CompressImage(string base64Image);
 }
 
 public class ImageService : IImageService
 {
+    public async Task<string> CreateImage(int width, int height)
+    {
+        using (var image = new Image<Rgba32>(width, height, Color.White))
+        {    
+            using (var outputStream = new MemoryStream())
+            {
+                await image.SaveAsPngAsync(outputStream);
+                var base64Data = Convert.ToBase64String(outputStream.ToArray());
+                return $"data:image/png;base64,{base64Data}";
+            }
+        }
+    }
+
     public async Task<string> CompressImage(string base64Image)
     {
         var base64Data = base64Image.Substring(base64Image.IndexOf(",") + 1);
