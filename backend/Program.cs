@@ -77,9 +77,14 @@ var app = builder.Build();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+app.UseCors(x =>
+        x.WithOrigins("http://localhost:4000")
+        .AllowAnyHeader()
+        .WithMethods("GET", "POST")
+        .AllowCredentials());
+
 
 app.MapControllers();
-app.MapHub<SignalingHub>("/hub");
+app.MapHub<SignalingHub>("/api/hub");
 
 app.Run();
