@@ -1,11 +1,18 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using MongoDB.Driver;
 
 namespace SignalingServer.Hubs {
     
-    [Authorize]
     public class SignalingHub : Hub {
+        private readonly MongoDbContext _context;
         public static Dictionary<string, List<string>> ConnectedClients = [];
+
+        public SignalingHub(MongoDbContext context) {
+            _context = context;
+        }
 
         public async Task SendMessage(object message, string roomName) {
             await EmitLog("Client " + Context.ConnectionId + " said: " + message, roomName);
@@ -21,6 +28,13 @@ namespace SignalingServer.Hubs {
             }
 
             if (!ConnectedClients[roomName].Contains(Context.ConnectionId)) {
+                var project = await _context.GetCollection<Project>("projects")
+                    .Find(p => p.Id == roomName)
+                    .FirstOrDefaultAsync();
+
+                project.Collaborators.Add(Context.ConnectionId);
+
+                await _context.GetCollection<Project>("projects").ReplaceOneAsync(p => p.Id == roomName, project);
                 ConnectedClients[roomName].Add(Context.ConnectionId);
             }
 
@@ -72,6 +86,7 @@ namespace SignalingServer.Hubs {
 
         private async Task EmitLog(string message, string roomName)
         {
+            Console.WriteLine("[Server]: " + message);
             await Clients.Group(roomName).SendAsync("log", "[Server]: " + message);
         }
     }

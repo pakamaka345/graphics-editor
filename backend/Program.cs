@@ -28,7 +28,7 @@ builder.Services.AddAuthentication(options => {
         ValidateIssuerSigningKey = true,
         ValidIssuer = builder.Configuration["JWT:Issuer"],
         ValidAudience = builder.Configuration["JWT:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]!))
     };
 
     options.Events = new JwtBearerEvents {
@@ -60,7 +60,7 @@ builder.Services.AddAuthentication(options => {
 builder.Services.AddAuthorization();
 
 var emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
-builder.Services.AddSingleton(emailConfig);
+builder.Services.AddSingleton(emailConfig!);
 
 builder.Services.AddScoped<IEmailSender, EmailSender>();
 
@@ -77,9 +77,14 @@ var app = builder.Build();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+app.UseCors(x =>
+        x.WithOrigins("http://localhost:4000")
+        .AllowAnyHeader()
+        .WithMethods("GET", "POST")
+        .AllowCredentials());
+
 
 app.MapControllers();
-app.MapHub<SignalingHub>("/hub");
+app.MapHub<SignalingHub>("/api/hub");
 
 app.Run();

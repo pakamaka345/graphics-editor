@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { useParams } from 'react-router-dom';
@@ -6,6 +6,7 @@ import { useBaseUrl } from '../Contexts/BaseUrlContext';
 import ToolBar from '../Components/ToolBar';
 import Canvas from '../Components/Canvas';
 import { Vortex } from 'react-loader-spinner';
+import SignalRService from '../Services/SignalRService';
 
 const DrawingPage: React.FC = () => {
     const baseUrl = useBaseUrl();
@@ -17,6 +18,7 @@ const DrawingPage: React.FC = () => {
     const [image, setImage] = useState<string>('');
     const [name, setName] = useState<string>('');
     const [loading, setLoading] = useState(true);
+    const signalRServiceRef = useRef<SignalRService>();
 
     useEffect(() => {
         const getImage = async () => {
@@ -40,6 +42,15 @@ const DrawingPage: React.FC = () => {
         }
 
         getImage();
+
+        signalRServiceRef.current = new SignalRService(baseUrl);
+
+        const signalRService = signalRServiceRef.current;
+        signalRService.joinRoom(id!);
+
+        return () => {
+            signalRService.leaveRoom(id!);
+        };
     }, []);
 
     const LoadingComponent = () => {
@@ -77,3 +88,4 @@ const DrawingPage: React.FC = () => {
 };
 
 export default DrawingPage;
+
