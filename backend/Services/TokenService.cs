@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using EmailService;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
@@ -13,6 +14,7 @@ public interface ITokenService
     string GenerateRandomToken(User user);
     Task<bool> ValidateRandomToken(string token, string email);
     Task<string> GetUserIdBytoken(string token);
+    Task<Message> GetEmailConfirmationMessage(User user, string reactAppBaseUrl);
 }
 
 public class TokenService : ITokenService {
@@ -101,7 +103,7 @@ public class TokenService : ITokenService {
         }
     }
 
-    public async Task<bool> ValidateRandomToken(string token, string email)
+    public async Task<bool> ValidateRandomToken(string token, string email_or_id)
     {
         var authToken = await _context.GetCollection<AuthToken>("authToken")
             .AsQueryable()
@@ -109,7 +111,7 @@ public class TokenService : ITokenService {
         
         var user = await _context.GetCollection<User>("users")
             .AsQueryable()
-            .FirstOrDefaultAsync(u => u.Email == email);
+            .FirstOrDefaultAsync(u => u.Email == email_or_id || u.Id == email_or_id);
 
         if (authToken == null || user == null) throw new NullReferenceException("Token or user not found");
         if(authToken.ExpirationDate < DateTime.UtcNow) throw new Exception("Token has expired");
@@ -124,5 +126,23 @@ public class TokenService : ITokenService {
             .FirstOrDefaultAsync(x => x.Token == token);
         
         return authToken.UserId;
+    }
+
+    public async Task<Message> GetEmailConfirmationMessage(User user, string reactAppBaseUrl)
+    {
+        var token = GenerateRandomToken(user);
+        var ConfirmationToken = new AuthToken
+        {
+            Token = token,
+            UserId = user.Id,
+            ExpirationDate = DateTime.UtcNow.AddDays(2)
+        };
+        await _context.GetCollection<AuthToken>("authToken").InsertOneAsync(ConfirmationToken);
+        var callback = $"{reactAppBaseUrl}/confirm-email?token={token}";
+        if (string.IsNullOrEmpty(callback))
+        {
+           throw new Exception("Callback is empty");
+        }
+       return new Message([user.Email], "Email Confirmation token", $"Hi there!\nTo confirm your Virtuoso Board account please follow the instructions:\nYour email confirmation link is: {callback}\n(It is active for 2 days)");
     }
 }

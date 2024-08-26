@@ -8,6 +8,7 @@ import ForgotPassword from './Pages/ForgotPassword';
 import ResetPassword from './Pages/ResetPassword';
 import Dashboard from './Pages/Dashboard';
 import DrawingPage from './Pages/DrawingPage';
+import ConfirmEmail from "./Pages/ConfirmEmail.tsx";
 
 
 
@@ -25,6 +26,7 @@ const App: React.FC = () => {
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<Dashboard />}/>
             <Route path="/projects/:id" element={<DrawingPage />} />
+            <Route path='/confirm-email' element={<ConfirmEmail />} />
           </Route>
           <Route path="/*" element={<Home/>} />
         </Routes>

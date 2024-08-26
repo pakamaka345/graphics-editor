@@ -1,7 +1,9 @@
 using System.ComponentModel.DataAnnotations;
+using backend;
 using EmailService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
@@ -12,12 +14,13 @@ public class UsersController : ControllerBase
     private readonly MongoDbContext _context;
     private readonly ITokenService _tokenService;
     private readonly IEmailSender _emailSender;
-
-    public UsersController(MongoDbContext context, ITokenService tokenService, IEmailSender emailSender)
+    private readonly string reactAppBaseUrl;
+    public UsersController(MongoDbContext context, ITokenService tokenService, IEmailSender emailSender, IOptions<AppSettings> appSettings)
     {
         _context = context;
         _tokenService = tokenService;
         _emailSender = emailSender;
+        reactAppBaseUrl = appSettings.Value.ReactAppBaseUrl;
     }
 
     [HttpPost("register")]
@@ -25,7 +28,7 @@ public class UsersController : ControllerBase
     {
         var UserExists = await _context.GetCollection<User>("users")
                                 .AsQueryable()
-                                .AnyAsync(u => u.Login == user.Login || u.Email == user.Email);
+                                .AnyAsync(u => u.Email == user.Email);
 
         if (UserExists)
         {
@@ -33,10 +36,14 @@ public class UsersController : ControllerBase
         }
 
         user.Password = HashPassword(user.Password);
+        user.IsConfirmedEmail= false;
 
         await _context.GetCollection<User>("users").InsertOneAsync(user);
 
-        return Ok("User registered successfully");
+        //confirmation email part
+        await _emailSender.SendEmailAsync(await _tokenService.GetEmailConfirmationMessage(user, reactAppBaseUrl));
+
+        return Ok("User registered successfully, confirm your email.");
     }
 
     [HttpPost("login")]
@@ -107,14 +114,13 @@ public class UsersController : ControllerBase
 
         await _context.GetCollection<AuthToken>("authToken").InsertOneAsync(ResetToken);
 
-        var reactAppBaseUrl = "http://localhost:4000"; // Замість цього використовуйте фактичний IP або домен вашого React-додатку
         var callback = $"{reactAppBaseUrl}/reset-password?token={token}&email={user.Email}";
         if (string.IsNullOrEmpty(callback))
         {
             return StatusCode(500, "Failed to generate callback URL.");
         }
 
-        var message = new Message(new string[] { user.Email }, "Reset password token", callback);
+        var message = new Message(new string[] { user.Email }, "Reset password", $"Hi there!\nTo reset your Virtuoso Board account passsword please follow the instructions:\nYour reset password link is: {callback}\n(It is active for 5 minutes)");
         await _emailSender.SendEmailAsync(message);
         return Ok("Password reset token has been sent to your email");
     }
@@ -158,6 +164,44 @@ public class UsersController : ControllerBase
         }
     }
 
+    [Authorize]
+    [HttpPut("confirm-email")]
+    public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailModel model)
+    {
+        try
+        {
+            var userid = await _tokenService.GetUserIdBytoken(model.Token);
+            if (userid == null)
+            {
+                return BadRequest("Invalid token");
+            }
+            var user = await _context.GetCollection<User>("users")
+                                .AsQueryable()
+                                .FirstOrDefaultAsync(u => u.Id == userid);
+
+            if (user == null)
+            {
+                return BadRequest("User with this email does not exist");
+            }
+
+            user.IsConfirmedEmail = true;
+
+            var updateResult = await _context.GetCollection<User>("users")
+                                             .ReplaceOneAsync(u => u.Id == user.Id, user);
+
+            if (!updateResult.IsAcknowledged)
+            {
+                return BadRequest("Error confirming email");
+            }
+
+            return Ok("Email has been confirmed successfully");
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }   
+
 }
 
 public class LoginModel
@@ -181,5 +225,10 @@ public class ResetPasswordModel
     [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
     public required string ConfirmPassword { get; set; }
     public required string Email { get; set; }
+    public required string Token { get; set; }
+}
+
+public class ConfirmEmailModel
+{
     public required string Token { get; set; }
 }

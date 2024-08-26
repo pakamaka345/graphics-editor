@@ -14,4 +14,6 @@ public class User {
     [BsonElement("password")]
     [BsonRequired]
     public required string Password { get; set; }
+    [BsonElement("is_confirmed_email")]
+    public bool IsConfirmedEmail { get; set; } = true;
 }

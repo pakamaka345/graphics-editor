@@ -32,7 +32,7 @@ const Dashboard: React.FC = () => {
     const [recentProjects, setRecentProjects] = useState<ProjectCard[]>([]);
     const [allProjects, setAllProjects] = useState<ProjectCard[]>([]);
     const [isFetching, setIsFetching] = useState(true);
-    const [IsMoreToFetch, setIsMoreToFetch] = useState(true);
+    const [IsMoreToFetch, setIsMoreToFetch] = useState(false);
     const PageNumber = useRef(2);
 
     const fetchProjects = async () => {

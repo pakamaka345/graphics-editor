@@ -4,10 +4,13 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using SignalingServer.Hubs;
 using EmailService;
+using backend;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+
+builder.Services.Configure<AppSettings>(builder.Configuration);
 
 // Налаштування служб
 builder.Services.AddSingleton<MongoDbContext>();
@@ -78,9 +81,9 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseCors(x =>
-        x.WithOrigins("http://localhost:4000")
+        x.WithOrigins(builder.Configuration.GetValue<string>("ReactAppBaseUrl"))
         .AllowAnyHeader()
-        .WithMethods("GET", "POST")
+        .WithMethods("GET", "POST", "PUT", "DELETE")
         .AllowCredentials());
 
 

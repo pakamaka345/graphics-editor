@@ -36,7 +36,8 @@ public class AuthController : ControllerBase
                 {
                     Email = request.Email,
                     Login = request.Name,
-                    Password = BCrypt.Net.BCrypt.HashPassword(request.Email)
+                    Password = BCrypt.Net.BCrypt.HashPassword(request.Email),
+                    IsConfirmedEmail = true
                 };
                 await _context.GetCollection<User>("users").InsertOneAsync(user);
             }
@@ -65,7 +66,8 @@ public class AuthController : ControllerBase
             {
                 Email = request.Name,
                 Login = request.Name,
-                Password = BCrypt.Net.BCrypt.HashPassword(request.Name)
+                Password = BCrypt.Net.BCrypt.HashPassword(request.Name),
+                IsConfirmedEmail = true
             };
 
             var token = _tokenService.GenerateToken(user, false);
