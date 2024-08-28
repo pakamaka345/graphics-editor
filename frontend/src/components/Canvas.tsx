@@ -6,13 +6,13 @@ import Cookies from 'js-cookie';
 interface CanvasProps {
     imageId: string;
     image: string;
+    name: string;
     brushActive: boolean;
     saveActive: boolean;
-
     setImage: (image: string) => void;
 }
 
-const Canvas: React.FC<CanvasProps> = ({ imageId, image, brushActive, saveActive, setImage }) => {
+const Canvas: React.FC<CanvasProps> = ({ imageId, image, name, brushActive, saveActive, setImage }) => {
     const baseUrl = useBaseUrl();
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [isDrawing, setIsDrawing] = useState(false);
@@ -61,7 +61,7 @@ const Canvas: React.FC<CanvasProps> = ({ imageId, image, brushActive, saveActive
             const token = Cookies.get('token');
             
             try {
-                axios.put(`${baseUrl}/projects/${imageId}`, { image: base64 }, {
+                axios.put(`${baseUrl}/projects/${imageId}`, { image: base64, name }, {
                     headers: {
                         'Content-Type': 'application/json',
                         Authorization: `Bearer ${token}`

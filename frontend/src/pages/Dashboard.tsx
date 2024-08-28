@@ -33,6 +33,7 @@ const Dashboard: React.FC = () => {
     const [allProjects, setAllProjects] = useState<ProjectCard[]>([]);
     const [isFetching, setIsFetching] = useState(true);
     const [IsMoreToFetch, setIsMoreToFetch] = useState(false);
+    const [hoveredProjectId, setHoveredProjectId] = useState<string | null>(null);
     const PageNumber = useRef(2);
 
     const fetchProjects = async () => {
@@ -54,14 +55,13 @@ const Dashboard: React.FC = () => {
 
             setAllProjects([...allProjects, ...allSortedProjects]);
             PageNumber.current += 1;
-            if(projectData.length < 8) setIsMoreToFetch(false);
+            if (projectData.length < 8) setIsMoreToFetch(false);
         } catch (error: any) {
             console.error(error);
-            if(error.response.status===404){ // if no more projects are available
+            if (error.response.status === 404) { // if no more projects are available
                 setIsMoreToFetch(false);
             }
-        }
-        finally {
+        } finally {
             setIsFetching(false);
         }
     };
@@ -165,6 +165,14 @@ const Dashboard: React.FC = () => {
             setIsModalOpen(false);
         }
     }
+
+    const handleMouseEnter = (projectId: string) => {
+        setHoveredProjectId(projectId);
+    };
+
+    const handleMouseLeave = () => {
+        setHoveredProjectId(null);
+    };
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -272,7 +280,10 @@ const Dashboard: React.FC = () => {
                     </div>
 
                     {recentProjects.map((project) => (
-                        <ProjectCard key={project.id} project={project} onDelete={handleProjectDelete}/>
+                        <ProjectCard key={project.id} project={project} onDelete={handleProjectDelete}
+                                     onMouseEnter={() => handleMouseEnter(project.id)}
+                                     onMouseLeave={handleMouseLeave}
+                                     isHovered={project.id === hoveredProjectId}/>
                     ))}
                 </div>
 
@@ -282,15 +293,19 @@ const Dashboard: React.FC = () => {
                     <FontAwesomeIcon icon={faFolderOpen} className="mr-2"/>
                     All projects
                 </h2>
-                <div className="grid grid-cols-4 gap-4 place-items-center"> {/*place-items-center щоб вони були центрально*/}
+                <div
+                    className="grid grid-cols-4 gap-4 place-items-center"> {/*place-items-center щоб вони були центрально*/}
                     {allProjects.map((project) => (
-                        <ProjectCard key={project.id} project={project} onDelete={handleProjectDelete}/>
+                        <ProjectCard key={project.id} project={project} onDelete={handleProjectDelete}
+                                     onMouseEnter={() => handleMouseEnter(project.id)}
+                                     onMouseLeave={handleMouseLeave}
+                                     isHovered={project.id === hoveredProjectId}/>
                     ))}
                 </div>
                 {IsMoreToFetch && (
                     <button onClick={fetchProjects}
                             className="bg-gray-500 opacity-50 hover:opacity-80 text-white font-semibold py-2 px-6 rounded-lg shadow-lg transition-opacity duration-200 mt-4">
-                        {isFetching ? <LoadingDots /> : 'Load More'}
+                        {isFetching ? <LoadingDots/> : 'Load More'}
                     </button>
                 )}
             </div>

@@ -1,17 +1,17 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import { useParams } from 'react-router-dom';
-import { useBaseUrl } from '../Contexts/BaseUrlContext';
+import {useParams} from 'react-router-dom';
+import {useBaseUrl} from '../Contexts/BaseUrlContext';
 import ToolBar from '../Components/ToolBar';
 import Canvas from '../Components/Canvas';
-import { Vortex } from 'react-loader-spinner';
+import {Vortex} from 'react-loader-spinner';
 import SignalRService from '../Services/SignalRService';
 
 const DrawingPage: React.FC = () => {
     const baseUrl = useBaseUrl();
 
-    const { id } = useParams<{ id: string }>();
+    const {id} = useParams<{ id: string }>();
 
     const [brushActive, setBrushActive] = useState(false);
     const [saving, setSaving] = useState(false);
@@ -56,32 +56,34 @@ const DrawingPage: React.FC = () => {
     const LoadingComponent = () => {
         return (
             <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-            <Vortex
-                height={200}
-                width={200}
-                colors={['red', 'green', 'blue', 'yellow', 'orange', 'purple']}
-                wrapperStyle={{}}
-                wrapperClass=""
-                visible={true}
-                ariaLabel='oval-loading'
-            />
-        </div>
+                <Vortex
+                    height={200}
+                    width={200}
+                    colors={['red', 'green', 'blue', 'yellow', 'orange', 'purple']}
+                    wrapperStyle={{}}
+                    wrapperClass=""
+                    visible={true}
+                    ariaLabel='oval-loading'
+                />
+            </div>
         );
     };
 
     return (
         <div className="flex">
-            {loading && <LoadingComponent />}
+            {loading && <LoadingComponent/>}
             <ToolBar name={name}
-                onBrushClick={() => setBrushActive(!brushActive)}
-                onSaveClick={() => setSaving(!saving)} />
+                     onBrushClick={() => setBrushActive(!brushActive)}
+                     onSaveClick={() => setSaving(!saving)}
+                     onNameChange={(name) => setName(name)}/>
             <div className="flex-1 p-4">
                 <p className="text-lg text-gray-700 mb-4">ID: {id}</p>
                 <Canvas image={image}
-                    imageId={id as string}
-                    brushActive={brushActive}
-                    saveActive={saving}
-                    setImage={setImage} />
+                        imageId={id as string}
+                        brushActive={brushActive}
+                        saveActive={saving}
+                        setImage={setImage}
+                        name={name}/>
             </div>
         </div>
     );

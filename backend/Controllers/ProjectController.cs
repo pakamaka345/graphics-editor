@@ -135,6 +135,7 @@ public class ProjectController : ControllerBase
         if (project == null) return NotFound("Project not found.");
 
         project.Image = model.Image;
+        project.Name = model.Name;
         project.PreviewImage = await _imageService.CompressImage(model.Image);
         project.LastModifiedDate = DateTime.Now;
 
@@ -174,4 +175,5 @@ public class ProjectsGetModel
 public class SaveProjectModel
 {
     public required string Image { get; set; }
+    public required string Name { get; set; }
 }

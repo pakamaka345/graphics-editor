@@ -22,7 +22,7 @@ public class Project {
     [BsonRequired]
     public required int Height { get; set; }
 
-    [BsonElement("coloborators")]
+    [BsonElement("collaborators")]
     public List<string> Collaborators { get; set; } = new List<string>();
 
     [BsonElement("createdDate")]
